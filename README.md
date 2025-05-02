@@ -1,6 +1,6 @@
-# pybgproutesstream
+# pybgproutesmrt
 
-`pybgproutesstream` is a Python library designed to retrieve BGP (Border Gateway Protocol) data from GILL's database. It provides an interface for downloading BGP updates and routing information based on specified criteria. The library works for both linux and macOS.
+`pybgproutesmrt` is a Python library designed to retrieve BGP (Border Gateway Protocol) data from GILL's database. It provides an interface for downloading BGP updates and routing information based on specified criteria. The library works for both linux and macOS.
 
 ## Installation
 
@@ -9,8 +9,8 @@
 To install the package, clone the repository and run the following commands:
 
 ```bash
-git clone https://github.com/bgproutes-io/pybgproutesstream.git
-cd pybgproutesstream
+git clone https://github.com/bgproutes-io/pybgproutesmrt.git
+cd pybgproutesmrt
 ./build_all.sh
 ```
 
@@ -19,8 +19,8 @@ cd pybgproutesstream
 Alternatively, you can manually compile the C MRT parser and install the package:
 
 ```bash
-git clone https://github.com/bgproutes-io/pybgproutesstream.git
-cd pybgproutesstream
+git clone https://github.com/bgproutes-io/pybgproutesmrt.git
+cd pybgproutesmrt
 cd c_mrt_parser/
 autoheader
 autoconf
@@ -34,8 +34,8 @@ python3 -m pip install .
 In case you want to specify the path where the **libbgpgill.so** file must be installed, use the following commands instead:
 
 ```bash
-git clone https://github.com/bgproutes-io/pybgproutesstream.git
-cd pybgproutesstream
+git clone https://github.com/bgproutes-io/pybgproutesmrt.git
+cd pybgproutesmrt
 cd c_mrt_parser/
 autoheader
 autoconf
@@ -66,20 +66,20 @@ You can generate the documentation for the Python package (once it is installed!
 
 ```bash
 python3 -m pip install pdoc
-pdoc -d google pybgproutesstream -o docs
+pdoc -d google pybgproutesmrt -o docs
 open docs/index.html
 ```
 
 ## Usage
 
-The core component of the package is the `BGProutesStream` class, which retrieves data from GILL's database based on user-defined time ranges, record types, and vantage points (VPs).
+The core component of the package is the `BGProutesMRT` class, which retrieves data from GILL's database based on user-defined time ranges, record types, and vantage points (VPs).
 
-### Class: `BGProutesStream`
+### Class: `BGProutesMRT`
 
 #### Constructor
 
 ```python
-class BGProutesStream:
+class BGProutesMRT:
     def __init__(self, from_time, until_time, record_type: str, vps=None):
         self.from_time      = from_time
         self.until_time     = until_time
@@ -143,10 +143,10 @@ The string form of a `BGPmessage` object is formatted as follows:
 To map each prefix with its origin ASN, you can use the following script.
 
 ```python
-from pybgproutesstream.broker import BGProutesStream
+from pybgproutesmrt.broker import BGProutesMRT
 
 origins = dict()
-stream = BGProutesStream(
+stream = BGProutesMRT(
     "2025-05-02T07:50:00", 
     "2025-05-02T08:10:00", 
     "ribs", 
@@ -171,10 +171,10 @@ for msg in stream.get_all_data():
 To look for BGP updates that announce a blackholing community, use the following script.
 
 ```python
-from pybgproutesstream.broker import BGProutesStream
+from pybgproutesmrt.broker import BGProutesMRT
 
-broker = BGProutesStream(
-    1740768000, 1740769000, "updates"
+broker = BGProutesMRT(
+    1746204418, 1746206418, "updates"
 )
 
 for msg in broker.get_all_data():
@@ -202,7 +202,7 @@ for msg in broker.get_all_data():
 You can use our library to parse single MRT files (only for BGP).
 
 ```python
-from pygillstream.broker import parse_one_file
+from pybgproutesmrt.broker import parse_one_file
 import requests
 
 url = "https://archive.routeviews.org/route-views3/bgpdata/2025.02/UPDATES/updates.20250201.0010.bz2"
