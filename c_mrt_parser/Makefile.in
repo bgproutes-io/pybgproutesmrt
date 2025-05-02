@@ -1,0 +1,41 @@
+CC	= @CC@ -fPIC
+CFLAGS	= @CFLAGS@
+COMPILE  = $(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES)
+
+LD	= @CC@
+LDFLAGS	= @LDFLAGS@
+SOFLAGS = @SOFLAGS@
+RANLIB	= @RANLIB@
+
+SYS_LIBS= @LIBS@
+
+INSTALL  = install
+
+prefix   = @prefix@
+exec_prefix = @exec_prefix@
+bindir   = @bindir@
+libdir   = @libdir@
+includedir = @includedir@
+
+LIB_H	 = bgp_macros.h common.h
+LIB_O	 = cfr_files.o mrt_entry.o file_buffer.o
+OTHER    = *.in configure README*
+
+all: bgproutesmrt libbgproutesmrt.so
+
+libbgproutesmrt.a: $(LIB_H) $(LIB_O) Makefile cfr_files.h
+	ar r libbgproutesmrt.a $(LIB_O)
+	$(RANLIB) libbgproutesmrt.a
+
+libbgproutesmrt.so: libbgproutesmrt.a
+	$(COMPILE) $(LDFLAGS) $(SOFLAGS) -o libbgproutesmrt.so $(LIB_O) $(SYS_LIBS)
+
+bgproutesmrt: main.c libbgproutesmrt.a
+	$(COMPILE) $(LDFLAGS) -o bgpgill main.c libbgproutesmrt.a $(SYS_LIBS)
+
+clean:
+	rm -f libbgproutesmrt.so libbgproutesmrt.a example bgpgill $(LIB_O)
+
+install: all
+	$(INSTALL) -d $(DESTDIR)$(libdir)
+	$(INSTALL) libbgproutesmrt.so libbgproutesmrt.a $(DESTDIR)$(libdir)

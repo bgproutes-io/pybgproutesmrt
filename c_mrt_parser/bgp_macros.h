@@ -1,0 +1,51 @@
+/*
+ * SPDX-FileCopyrightText: 2025 2025 Thomas Alfroy
+ * SPDX-FileCopyrightText: 2025 Thomas Alfroy
+ *
+ * SPDX-License-Identifier: GPL-2.0-only
+ */
+
+#define MRT_TYPE_BGP4MP			    16      /* MSG_PROTOCOL_BGP4MP */
+#define MRT_TYPE_BGP4MP_ET          17      /* MSG_PROTOCOL_BGP4MP_ET */
+#define MRT_TYPE_TABLE_DUMP_V2      13
+
+#define MRT_SUBTYPE_BGP4MP_MESSAGE          1
+#define MRT_SUBTYPE_BGP4MP_MESSAGE_AS4      4
+#define MRT_SUBTYPE_BGP4MP_MESSAGE_LOCAL        6
+#define MRT_SUBTYPE_BGP4MP_MESSAGE_AS4_LOCAL    7
+#define MRT_SUBTYPE_BGP4MP_STATE_CHANGE         0
+#define MRT_SUBTYPE_BGP4MP_STATE_CHANGE_AS4     5
+
+/* SUPPORTED MRT SUBTYPES FOR BGP ROUTING TABLES */
+#define BGP_SUBTYPE_PEER_INDEX_TABLE    1   
+#define BGP_SUBTYPE_RIB_IPV4_UNICAST    2
+#define BGP_SUBTYPE_RIB_IPV6_UNICAST    4
+
+/* BGP ENTRY AFI TYPE */
+#define BGP_IPV4_AFI        0x0001
+#define BGP_IPV6_AFI        0x0002
+
+/* BGP MESSAGE TYPES */
+#define BGP_TYPE_OPEN               0x01
+#define BGP_TYPE_KEEPALIVE          0x04
+#define BGP_TYPE_UPDATE             0x02
+#define BGP_TYPE_NOTIFICATION       0x03
+#define BGP_TYPE_STATE_CHANGE       0x05
+
+/* BGP ATTRI BUTE VALUES */
+#define BGP_UPDATE_ATTR_ORIGIN      0x01
+#define BGP_UPDATE_ATTR_AS_PATH     0x02
+#define BGP_UPDATE_ATTR_NEXT_HOP    0x03
+#define BGP_UPDATE_ATTR_MED         0x04
+#define BGP_UPDATE_NLRI_COMMUNITIES 0x08
+#define BGP_UPDATE_ATTR_NLRI        0x0e
+#define BGP_UPDATE_NLRI_UNREACH     0x0f
+
+/* SUBVALUES FOR BGP ATTRIBUTES */
+#define BGP_UPDATE_ORIGIN_IGP           0x00
+#define BGP_UPDATE_ORIGIN_EGP           0x01
+#define BGP_UPDATE_ORIGIN_INCOMPLETE    0x02
+#define BGP_UPDATE_AS_PATH_SEQ          0x02
+#define BGP_UPDATE_AS_PATH_SET          0x01
+#define BGP_UPDATE_CODE_NEXTHOP         0x03
+
