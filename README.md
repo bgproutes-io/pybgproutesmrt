@@ -1,6 +1,6 @@
 # pybgproutesmrt
 
-`pybgproutesmrt` is a Python library designed to retrieve BGP (Border Gateway Protocol) data from GILL's database. It provides an interface for downloading BGP updates and routing information based on specified criteria. The library works for both linux and macOS.
+`pybgproutesmrt` is a Python library for retrieving BGP (Border Gateway Protocol) data from the bgproutes.io MRT archive. It provides a simple interface for downloading BGP updates and RIB dumps based on user-defined criteria. The library is compatible with both Linux and macOS.
 
 ## Installation
 
