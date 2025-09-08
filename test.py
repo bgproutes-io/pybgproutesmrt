@@ -2,20 +2,22 @@ from pybgproutesmrt.broker import BGProutesMRT
 
 origins = dict()
 stream = BGProutesMRT(
-    "2025-05-02T07:50:00", 
-    "2025-05-02T08:10:00", 
-    "ribs", 
-    vps=["207465_194.147.139.2", "328840_139.84.227.165"])
+    1757300400,
+    1757307600,
+    "updates",
+    peering_protocol="bmp",
+    vps=["6939_206.223.118.37|4128_129.250.12.22"])
 
 for msg in stream.get_all_data():
-    if msg.type != "R":
-        continue
+    # if msg.type != "U":
+    #     continue
 
-    aspath = msg.as_path
-    if not len(aspath):
-        continue
+    print(msg)
+    # aspath = msg.as_path
+    # if not len(aspath):
+    #     continue
 
-    origin = aspath.split(" ")[-1]
+    # origin = aspath.split(" ")[-1]
 
-    for prefix in msg.nlri:
-        origins[prefix] = origin
+    # for prefix in msg.nlri:
+    #     origins[prefix] = origin

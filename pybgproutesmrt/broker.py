@@ -123,58 +123,110 @@ class BGPmessage:
         bgpType (int): Integer value of the type of BGP message.
     """
     def __init__(self, mrtentry):
-        self.ts          = 0.0
-        self.type        = 0
-        self.nlri        = list()
-        self.withdraws   = list()
-        self.origin      = ""
-        self.nexthop     = ""
-        self.as_path     = ""
-        self.communities = ""
-        self.peer_asn    = 0
-        self.peer_addr   = ""
-        self.msgType     = "Unknown"
-        self.bgpType     = 0
+        self._ts          = 0.0
+        self._type        = 0
+        self._nlri        = list()
+        self._withdraws   = list()
+        self._origin      = ""
+        self._nexthop     = ""
+        self._as_path     = ""
+        self._communities = ""
+        self._peer_asn    = 0
+        self._peer_addr   = ""
+        self._msgType     = "Unknown"
+        self._bgpType     = 0
 
-        self.type = mrtentry.contents.entryType
-        self.origin = mrtentry.contents.origin.decode()
-        self.as_path = mrtentry.contents.asPath.decode()
-        self.communities = mrtentry.contents.communities.decode()
-        self.nexthop = mrtentry.contents.nextHop.decode()
-        self.ts = mrtentry.contents.time + mrtentry.contents.time_ms / 1000000
-        self.peer_asn = mrtentry.contents.peer_asn
-        self.peer_addr = mrtentry.contents.peerAddr.decode()
-        self.bgpType = mrtentry.contents.bgpType
+        self._type = mrtentry.contents.entryType
+        self._origin = mrtentry.contents.origin.decode()
+        self._as_path = mrtentry.contents.asPath.decode()
+        self._communities = mrtentry.contents.communities.decode()
+        self._nexthop = mrtentry.contents.nextHop.decode()
+        self._ts = mrtentry.contents.time + mrtentry.contents.time_ms / 1000000
+        self._peer_asn = mrtentry.contents.peer_asn
+        self._peer_addr = mrtentry.contents.peerAddr.decode()
+        self._bgpType = mrtentry.contents.bgpType
 
         # Setup MSG Type
         if self.type == BGP_TYPE_ZEBRA_BGP or self.type == BGP_TYPE_ZEBRA_BGP_ET:
-            if self.bgpType == BGP_TYPE_OPEN:
-                self.msgType = "O"
-            elif self.bgpType == BGP_TYPE_UPDATE:
-                self.msgType = "U"
-            elif self.bgpType == BGP_TYPE_NOTIFICATION:
-                self.msgType = "N"
-            elif self.bgpType == BGP_TYPE_KEEPALIVE:
-                self.msgType = "K"
-            elif self.bgpType == BGP_TYPE_STATE_CHANGE:
-                self.msgType = "S"
+            if self._bgpType == BGP_TYPE_OPEN:
+                self._msgType = "O"
+            elif self._bgpType == BGP_TYPE_UPDATE:
+                self._msgType = "U"
+            elif self._bgpType == BGP_TYPE_NOTIFICATION:
+                self._msgType = "N"
+            elif self._bgpType == BGP_TYPE_KEEPALIVE:
+                self._msgType = "K"
+            elif self._bgpType == BGP_TYPE_STATE_CHANGE:
+                self._msgType = "S"
 
-        elif self.type == BGP_TYPE_TABLE_DUMP_V2:
-            self.msgType = "R"
+        elif self._type == BGP_TYPE_TABLE_DUMP_V2:
+            self._msgType = "R"
 
 
         for i in range(0, mrtentry.contents.nbWithdraw):
-            self.withdraws.append(mrtentry.contents.pfxWithdraw[i].value.decode())
+            self._withdraws.append(mrtentry.contents.pfxWithdraw[i].value.decode())
 
         for i in range(0, mrtentry.contents.nbNLRI):
-            self.nlri.append(mrtentry.contents.pfxNLRI[i].value.decode())
+            self._nlri.append(mrtentry.contents.pfxNLRI[i].value.decode())
 
+
+    
+    @property
+    def ts(self) -> float:
+        return self._ts
+    
+    @property
+    def type(self) -> int:
+        return self._type
+    
+    @property
+    def nlri(self) -> list[str]:
+        return self._nlri
+    
+    @property
+    def withdraws(self) -> list[str]:
+        return self._withdraws
+    
+    @property
+    def origin(self) -> str:
+        return self._origin
+    
+    @property
+    def nexthop(self) -> str:
+        return self._nexthop
+    
+    @property
+    def as_path(self) -> str:
+        return self._as_path
+    
+    @property
+    def communities(self) -> str:
+        return self._communities
+    
+    @property
+    def peer_asn(self) -> int:
+        return self._peer_asn
+    
+    @property
+    def peer_addr(self) -> str:
+        return self._peer_addr
+    
+    @property
+    def msgType(self) -> str:
+        return self._msgType
+    
+    @property
+    def bgpType(self) -> str:
+        return self._bgpType
 
     
     def __str__(self):
         res = "{}|{}|{}|{}|{}|{}|{}|{}|{}|{}".format(self.msgType, self.ts, ",".join(self.nlri), ",".join(self.withdraws), self.origin, self.nexthop, self.as_path, self.communities, self.peer_asn, self.peer_addr)
 
         return res
+    
+
+
 
 mylib = ctypes.CDLL("{}/libbgproutesmrt.so".format(BGPROUTESMRT_LIBRARY_PATH))
 
@@ -295,6 +347,9 @@ def parse_one_file(fn :str):
 
     dumper = mylib.File_buf_create(fn.encode())
 
+    if not dumper:
+        return -1
+
     while dumper.contents.eof == 0:
         entry = mylib.Read_next_mrt_entry(dumper)
 
@@ -331,20 +386,24 @@ class BGProutesMRT:
         from_time (str, int, float): Time from which we should start getting the data. In case
         this parameter is a string, must be of the form of 'YYYY-MM-DD HH:MM:SS'. Otherwise,
         must be a UNIX timestamp.
+
         until_time (str, int, float): Time from which we should start getting the data. In case
         this parameter is a string, must be of the form of 'YYYY-MM-DD HH:MM:SS'. Otherwise,
         must be a UNIX timestamp.
+
         record_type (str): Specify which type of data must be downloaded. For now, only 'updates'
         and 'ribs' are supported.
+
         vps (list): Represent the list of Vantage Points from which we want to collect the data.
         Each VP must be of the form 'ASN_IP'. In case this parameter is not set, collect data from
         all VPs.
+
         all_files (list): List of all files that need to be downloaded to process all required data.
         remaining_files (list): List of files that e still need to process.
         dumper (FILE_BUF_T): Structure of the file dumper.
     """
 
-    def __init__(self, from_time, until_time, record_type :str, vps=None):
+    def __init__(self, from_time, until_time, record_type :str, peering_protocol='bgp', vps=None):
         """
         Initialize the Stream of GILL data. Query the broker to know precisely which files
         need to be downloaded and processed.
@@ -353,14 +412,21 @@ class BGProutesMRT:
             from_time (str, int, float): Time from which we should start getting the data. In case
             this parameter is a string, must be of the form of 'YYYY-MM-DD HH:MM:SS'. Otherwise,
             must be a UNIX timestamp.
+
             until_time (str, int, float): Time from which we should start getting the data. In case
             this parameter is a string, must be of the form of 'YYYY-MM-DD HH:MM:SS'. Otherwise,
             must be a UNIX timestamp.
+
             record_type (str): Specify which type of data must be downloaded. For now, only 'updates'
             and 'ribs' are supported.
+
+            peering_protocol (str): Tell from which peering protocol we should get the data (either
+            'bgp' or 'bmp').
+
             vps (list): Represent the list of Vantage Points from which we want to collect the data.
-            Each VP must be of the form 'ASN_IP'. In case this parameter is not set, collect data from
-            all VPs.
+            Each VP must be of the form 'ASN_IP'. In the case of BMP (i.e., when we set peering_protocol='bmp'),
+            each VP must be of the form 'ASN_IP|parent_ASN_perantIP'. In case this parameter is not set, 
+            collect data from all VPs corresponding to the set peering protocol. 
         """
         
         self.from_time = 0
@@ -368,6 +434,7 @@ class BGProutesMRT:
 
         self.vps = vps
         self.record_type = record_type
+        self.peering_protocol = peering_protocol
 
         self.all_files = list()
         self.remaining_files = list()
@@ -398,9 +465,10 @@ class BGProutesMRT:
                 exit(1)
 
         if self.vps:
-            http_request = "https://mrt-broker.bgproutes.io/broker?vps={}&from_time={}&until_time={}&data_type={}".format(",".join(self.vps), self.from_time, self.until_time, self.record_type)
+            http_request = "https://mrt-broker.bgproutes.io/broker?peering_protocol={}&vps={}&from_time={}&until_time={}&data_type={}".format(self.peering_protocol, ",".join(self.vps), self.from_time, self.until_time, self.record_type)
         else:
-            http_request = "https://mrt-broker.bgproutes.io/broker?from_time={}&until_time={}&data_type={}".format(self.from_time, self.until_time, self.record_type)
+            http_request = "https://mrt-broker.bgproutes.io/broker?peering_protocol={}&from_time={}&until_time={}&data_type={}".format(self.peering_protocol, self.from_time, self.until_time, self.record_type)
+
 
         timeout = 1
         data = None

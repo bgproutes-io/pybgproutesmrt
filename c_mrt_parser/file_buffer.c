@@ -104,7 +104,6 @@ File_buf_t* File_buf_create(const char *filename)
 
     if (!dumper->f)
     {
-        printf("Unable to open file %s\n", filename);
         free(dumper);
         return NULL;
     }
