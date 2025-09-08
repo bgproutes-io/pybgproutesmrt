@@ -80,11 +80,12 @@ The core component of the package is the `BGProutesMRT` class, which retrieves d
 
 ```python
 class BGProutesMRT:
-    def __init__(self, from_time, until_time, record_type: str, vps=None):
-        self.from_time      = from_time
-        self.until_time     = until_time
-        self.record_type    = record_type
-        self.vps            = vps if vps else []
+    def __init__(self, from_time, until_time, record_type: str, peering_protocol='bgp', vps=None):
+        self.from_time        = from_time
+        self.until_time       = until_time
+        self.record_type      = record_type
+        self.peering_protocol = peering_protocol
+        self.vps              = vps if vps else []
 ```
 
 #### Parameters:
@@ -93,7 +94,10 @@ class BGProutesMRT:
 - **record_type**: Specifies the type of BGP records to retrieve. Valid options are:
   - `'updates'`: For BGP updates.
   - `'ribs'`: For BGP routing information base (RIB) data.
-- **vps** (optional): A list of vantage points (VPs) to filter the data. If `None`, data from all VPs will be retrieved. The format for each VP is `'asn_ip'`.
+- **peering_protocol**: Specifies which protocol we want to get the data from. Values are either `bgp` or `bmp`.
+- **vps** (optional): A list of vantage points (VPs) to filter the data. If `None`, data from all VPs will be retrieved. 
+  - In case of BGP: The format for each VP is `'asn_ip'`.
+  - In case of BMP: The format for each VP is `'asn_ip|parentasn_parentip'`.
 
 ### Method: `get_all_data()`
 
