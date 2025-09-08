@@ -231,6 +231,57 @@ for msg in parse_one_file(fn):
 print(cumulated_size / nb_msg)
 ```
 
+## Using the MRT Broker API
+
+If you prefer not to use the Python client to retrieve MRT data from [bgproutes.io](https://bgproutes.io), you can directly query our MRT broker to obtain a list of downloadable files.
+
+The broker is accessible at:  
+**`https://mrt-broker.bgproutes.io`**
+
+Given a set of query parameters, it returns the list of MRT files matching your request.
+
+> **Note:** Although bgproutes.io collects data from third-party platforms such as RIPE RIS, RouteViews, PCH, and RIS CGTF, we do **not** host or distribute their MRT files. These files are publicly available from their respective sources.
+
+### API Parameters
+
+The following parameters are supported by the broker API:
+
+- **`from_time`** (required):  
+  Start of the time window. Accepts either:
+  - A UNIX timestamp (as an integer)
+  - A date-time string in the format: `YYYY-MM-DDTHH:MM:SS` (ISO 8601)
+
+- **`until_time`** (required):  
+  End of the time window. Same format as `from_time`.
+
+- **`data_type`** (required):  
+  Type of MRT data. Possible values:
+  - `updates`
+  - `ribs`
+
+- **`peering_protocol`** (optional, default = `bgp`):  
+  The protocol from which data is collected. Possible values:
+  - `bgp`
+  - `bmp`
+
+- **`vps`** (optional):  
+  List of vantage points (VPs) to filter data from. Format depends on the protocol:
+  - For **BGP** (`peering_protocol=bgp`):  
+    `asn1_ip1,asn2_ip2,...`
+  - For **BMP** (`peering_protocol=bmp`):  
+    `asn1_ip1|parentasn1_parentip1,asn2_ip2|parentasn2_parentip2,...`
+
+  If not specified, the broker returns files from all VPs matching the selected protocol.
+
+- **`feed_type`** (optional, BMP only):  
+  Restrict results to specific BMP feed types. Supported values:
+  - `bmp_adj_in_pre`
+  - `bmp_adj_in_post`
+  - `bmp_loc_rib`
+  - `bmp_adj_out_pre`
+  - `bmp_adj_out_post`  
+  Multiple values can be provided, separated by commas.
+
 ## Funding
 
 This library is funded through [NGI Zero Core](https://nlnet.nl/core), a fund established by [NLnet](https://nlnet.nl) with financial support from the European Commission's [Next Generation Internet](https://ngi.eu) program. Learn more at the [NLnet project page](https://nlnet.nl/project/BGP-ForgedOrigin).
